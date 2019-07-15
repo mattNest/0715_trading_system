@@ -1,1 +1,1 @@
-## 0715 Quantitavie Analyst GUI
+## Bincentive Trading Strategy Management System
