@@ -1,1 +1,1 @@
-## Bincentive Trading Strategy Management System
+## Bincentive Quant's Trading Strategy Management System
