@@ -1,1 +1,1 @@
-0715 Trading System
+## 0715 Quantitavie Analyst GUI
