@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtPrintSupport import *
+
 import sys,sqlite3,time
 import os
 
@@ -204,49 +205,22 @@ class AboutDialog(QDialog):
 
         self.setLayout(layout)
 
-class RunStrategyDialog(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(RunStrategyDialog, self).__init__(*args, **kwargs)
+class StrategyRadioButton(QDialog):
+    def __init__(self, parent = None):
+        super(Radiodemo, self).__init__(parent)
+        
+        layout = QHBoxLayout()
+        self.b1 = QRadioButton("Button1")
+        self.b1.setChecked(True)
+        self.b1.toggled.connect(lambda:self.btnstate(self.b1))
+        layout.addWidget(self.b1)
+        
+        self.b2 = QRadioButton("Button2")
+        self.b2.toggled.connect(lambda:self.btnstate(self.b2))
 
-        self.QBtn = QPushButton()
-        self.QBtn.setText("Run Strategy")
-
-        self.setWindowTitle("Run Strategy")
-        self.setFixedWidth(300)
-        self.setFixedHeight(100)
-        self.QBtn.clicked.connect(self.run_strategy)
-        layout = QVBoxLayout()
-
-        self.searchinput = QLineEdit()
-        self.onlyInt = QIntValidator()
-        self.searchinput.setValidator(self.onlyInt)
-        self.searchinput.setPlaceholderText("Trading Strategy No.")
-        layout.addWidget(self.searchinput)
-        layout.addWidget(self.QBtn)
+        layout.addWidget(self.b2)
         self.setLayout(layout)
-
-
-    def run_strategy(self):
-
-        searchrol = ""
-        searchrol = self.searchinput.text()
-        
-        try:
-            self.conn = sqlite3.connect("database.db")
-            self.c = self.conn.cursor()
-            result = self.c.execute("SELECT * from strategy WHERE roll="+str(searchrol))
-            row = result.fetchone()
-            serachresult = "Strategy No. : " + str(row[0]) + '\n' + "Name : " + str(row[1]) + '\n' + "Branch : " + str(row[2])
-            QMessageBox.information(QMessageBox(), 'Successful', serachresult)
-            self.conn.commit()
-            self.c.close()
-            self.conn.close()
-
-            # run the match no. of strategy
-
-        
-        except Exception:
-            QMessageBox.warning(QMessageBox(), 'Error', 'Cannot find strategy from db.')
+        self.setWindowTitle("RadioButton demo")
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -260,7 +234,6 @@ class MainWindow(QMainWindow):
         file_menu = self.menuBar().addMenu("&File")
         help_menu = self.menuBar().addMenu("&About")
         self.setWindowTitle("Trading Strategy Management System")
-
         self.setMinimumSize(800, 600)
 
         self.tableWidget = QTableWidget()
@@ -274,6 +247,7 @@ class MainWindow(QMainWindow):
         self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidget.verticalHeader().setStretchLastSection(False)
         self.tableWidget.setHorizontalHeaderLabels(("Strategy No.", "Name", "Branch"))
+
 
         toolbar = QToolBar()
         toolbar.setMovable(False)
@@ -325,10 +299,9 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self.about)
         help_menu.addAction(about_action)
 
-        go_png_path = os.path.join(icon_path,'go.png')
-        run_strategy = QAction(QIcon(go_png_path), "Run", self)
-        run_strategy.triggered.connect(self.run_strategy)
-        toolbar.addAction(run_strategy)
+
+
+
     
 
     def loaddata(self):
@@ -370,12 +343,9 @@ class MainWindow(QMainWindow):
         dlg = AboutDialog()
         dlg.exec_()
 
-    # trigger the user type in .py strategy
-    def run_strategy(self):
-        dlg = RunStrategyDialog()
+    def run(self):
+        dlg = StrategyRadioButton()
         dlg.exec_()
-
-
 
 app = QApplication(sys.argv)
 passdlg = LoginDialog()
@@ -383,4 +353,6 @@ if(passdlg.exec_() == QDialog.Accepted):
     window = MainWindow()
     window.show()
     window.loaddata()
+
+
 sys.exit(app.exec_())
