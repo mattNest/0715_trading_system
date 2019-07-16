@@ -183,7 +183,12 @@ class AboutDialog(QDialog):
         title.setFont(font)
 
         labelpic = QLabel()
-        pixmap = QPixmap('icon/logo.png')
+
+        now_path = os.getcwd() # get the path now
+        icon_path = os.path.join(now_path,'icon')
+        logo_path = os.path.join(icon_path, 'logo.png')
+        pixmap = QPixmap(logo_path)
+        
         pixmap = pixmap.scaledToWidth(275)
         labelpic.setPixmap(pixmap)
         labelpic.setFixedHeight(150)
@@ -195,7 +200,6 @@ class AboutDialog(QDialog):
         layout.addWidget(QLabel("Created by Matthew"))
         layout.addWidget(labelpic)
 
-
         layout.addWidget(self.buttonBox)
 
         self.setLayout(layout)
@@ -205,7 +209,6 @@ class TriggerStrategyDialog(QDialog):
         super(InsertDialog, self).__init__(*args, **kwargs)
         self.QBtn = QPushButton()
         self.QBtn.setText("Run Strategy")
-
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -241,43 +244,51 @@ class MainWindow(QMainWindow):
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
 
-        btn_ac_adduser = QAction(QIcon("icon/add.png"), "Add Strategy", self)
+        now_path = os.getcwd()
+        icon_path = os.path.join(now_path,'icon')
+        add_png_path = os.path.join(icon_path,'add.png')
+        btn_ac_adduser = QAction(QIcon(add_png_path), "Add Strategy", self)
         btn_ac_adduser.triggered.connect(self.insert)
         btn_ac_adduser.setStatusTip("Add Strategy")
         toolbar.addAction(btn_ac_adduser)
 
-        btn_ac_refresh = QAction(QIcon("icon/refresh.png"),"Refresh",self)
+        refresh_png_path = os.path.join(icon_path,'refresh.png')
+        btn_ac_refresh = QAction(QIcon(refresh_png_path),"Refresh",self)
         btn_ac_refresh.triggered.connect(self.loaddata)
         btn_ac_refresh.setStatusTip("Refresh Table")
         toolbar.addAction(btn_ac_refresh)
 
-        btn_ac_search = QAction(QIcon("icon/search.png"), "Search", self)
+        search_png_path = os.path.join(icon_path,'search.png')
+        btn_ac_search = QAction(QIcon(search_png_path), "Search", self)
         btn_ac_search.triggered.connect(self.search)
         btn_ac_search.setStatusTip("Search Strategy")
         toolbar.addAction(btn_ac_search)
 
-        btn_ac_delete = QAction(QIcon("icon/trash.png"), "Delete", self)
+        trash_png_path = os.path.join(icon_path,'trash.png')
+        btn_ac_delete = QAction(QIcon(trash_png_path), "Delete", self)
         btn_ac_delete.triggered.connect(self.delete)
         btn_ac_delete.setStatusTip("Delete Strategy")
         toolbar.addAction(btn_ac_delete)
 
-        adduser_action = QAction(QIcon("icon/add.png"),"Insert Strategy", self)
+        adduser_action = QAction(QIcon(add_png_path),"Insert Strategy", self)
         adduser_action.triggered.connect(self.insert)
         file_menu.addAction(adduser_action)
 
-        searchuser_action = QAction(QIcon("icon/search.png"), "Search Strategy", self)
+        searchuser_action = QAction(QIcon(search_png_path), "Search Strategy", self)
         searchuser_action.triggered.connect(self.search)
         file_menu.addAction(searchuser_action)
 
-        deluser_action = QAction(QIcon("icon/trash.png"), "Delete", self)
+        deluser_action = QAction(QIcon(trash_png_path), "Delete", self)
         deluser_action.triggered.connect(self.delete)
         file_menu.addAction(deluser_action)
 
-        about_action = QAction(QIcon("icon/info.png"),"Developer", self)
+        info_png_path = os.path.join(icon_path,'info.png')
+        about_action = QAction(QIcon(info_png_path),"Developer", self)
         about_action.triggered.connect(self.about)
         help_menu.addAction(about_action)
 
-        trigger_strategy = QAction(QIcon("icon/go.png"), "Run", self)
+        go_png_path = os.path.join(icon_path,'go.png')
+        trigger_strategy = QAction(QIcon(go_png_path), "Run", self)
         trigger_strategy.triggered.connect(self.trigger_strategy)
         toolbar.addAction(trigger_strategy)
     
