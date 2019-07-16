@@ -84,7 +84,7 @@ class SearchDialog(QDialog):
             self.c = self.conn.cursor()
             result = self.c.execute("SELECT * from strategy WHERE roll="+str(searchrol))
             row = result.fetchone()
-            serachresult = "Strategy No. : " + str(row[0]) + '\n' + "Name : " + str(row[1]) + '\n' + "Branch : "
+            serachresult = "Strategy No. : " + str(row[0]) + '\n' + "Name : " + str(row[1]) + '\n' + "Branch : " + str(row[2])
             QMessageBox.information(QMessageBox(), 'Successful', serachresult)
             self.conn.commit()
             self.c.close()
@@ -204,11 +204,49 @@ class AboutDialog(QDialog):
 
         self.setLayout(layout)
 
-class TriggerStrategyDialog(QDialog):
+class RunStrategyDialog(QDialog):
     def __init__(self, *args, **kwargs):
-        super(InsertDialog, self).__init__(*args, **kwargs)
+        super(RunStrategyDialog, self).__init__(*args, **kwargs)
+
         self.QBtn = QPushButton()
         self.QBtn.setText("Run Strategy")
+
+        self.setWindowTitle("Run Strategy")
+        self.setFixedWidth(300)
+        self.setFixedHeight(100)
+        self.QBtn.clicked.connect(self.run_strategy)
+        layout = QVBoxLayout()
+
+        self.searchinput = QLineEdit()
+        self.onlyInt = QIntValidator()
+        self.searchinput.setValidator(self.onlyInt)
+        self.searchinput.setPlaceholderText("Trading Strategy No.")
+        layout.addWidget(self.searchinput)
+        layout.addWidget(self.QBtn)
+        self.setLayout(layout)
+
+
+    def run_strategy(self):
+
+        searchrol = ""
+        searchrol = self.searchinput.text()
+        
+        try:
+            self.conn = sqlite3.connect("database.db")
+            self.c = self.conn.cursor()
+            result = self.c.execute("SELECT * from strategy WHERE roll="+str(searchrol))
+            row = result.fetchone()
+            serachresult = "Strategy No. : " + str(row[0]) + '\n' + "Name : " + str(row[1]) + '\n' + "Branch : " + str(row[2])
+            QMessageBox.information(QMessageBox(), 'Successful', serachresult)
+            self.conn.commit()
+            self.c.close()
+            self.conn.close()
+
+            # run the match no. of strategy
+
+        
+        except Exception:
+            QMessageBox.warning(QMessageBox(), 'Error', 'Cannot find strategy from db.')
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -288,13 +326,10 @@ class MainWindow(QMainWindow):
         help_menu.addAction(about_action)
 
         go_png_path = os.path.join(icon_path,'go.png')
-        trigger_strategy = QAction(QIcon(go_png_path), "Run", self)
-        trigger_strategy.triggered.connect(self.trigger_strategy)
-        toolbar.addAction(trigger_strategy)
+        run_strategy = QAction(QIcon(go_png_path), "Run", self)
+        run_strategy.triggered.connect(self.run_strategy)
+        toolbar.addAction(run_strategy)
     
-    # trigger the selected .py strategy
-    def trigger_strategy(self):
-        pass
 
     def loaddata(self):
         self.connection = sqlite3.connect("database.db")
@@ -333,6 +368,11 @@ class MainWindow(QMainWindow):
 
     def about(self):
         dlg = AboutDialog()
+        dlg.exec_()
+
+    # trigger the user type in .py strategy
+    def run_strategy(self):
+        dlg = RunStrategyDialog()
         dlg.exec_()
 
 
