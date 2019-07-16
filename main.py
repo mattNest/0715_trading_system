@@ -205,22 +205,55 @@ class AboutDialog(QDialog):
 
         self.setLayout(layout)
 
-class StrategyRadioButton(QDialog):
-    def __init__(self, parent = None):
-        super(Radiodemo, self).__init__(parent)
-        
-        layout = QHBoxLayout()
-        self.b1 = QRadioButton("Button1")
-        self.b1.setChecked(True)
-        self.b1.toggled.connect(lambda:self.btnstate(self.b1))
-        layout.addWidget(self.b1)
-        
-        self.b2 = QRadioButton("Button2")
-        self.b2.toggled.connect(lambda:self.btnstate(self.b2))
+class RunStrategyDialog(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(RunStrategyDialog, self).__init__(*args, **kwargs)
 
-        layout.addWidget(self.b2)
+        self.QBtn = QPushButton()
+        self.QBtn.setText("Run")
+
+        self.setWindowTitle("Run Strategy")
+        self.setFixedWidth(300)
+        self.setFixedHeight(100)
+        self.QBtn.clicked.connect(self.run_strategy)
+        layout = QVBoxLayout()
+
+        self.searchinput = QLineEdit()
+        self.onlyInt = QIntValidator()
+        self.searchinput.setValidator(self.onlyInt)
+        self.searchinput.setPlaceholderText("Trading Strategy No.")
+        layout.addWidget(self.searchinput)
+        layout.addWidget(self.QBtn)
         self.setLayout(layout)
-        self.setWindowTitle("RadioButton demo")
+
+    def run_strategy(self):
+
+        searchrol = ""
+        searchrol = self.searchinput.text()
+        
+        try:
+            self.conn = sqlite3.connect("database.db")
+            self.c = self.conn.cursor()
+            result = self.c.execute("SELECT * from strategy WHERE roll="+str(searchrol))
+            row = result.fetchone()
+            serachresult = "Strategy No. : " + str(row[0]) + '\n' + "Name : " + str(row[1]) + '\n' + "Branch : " + str(row[2])
+            QMessageBox.information(QMessageBox(), 'Successful', serachresult)
+            self.conn.commit()
+            self.c.close()
+            self.conn.close()
+            
+            # run the strategy
+            #py_path_now = os.getcwd()
+            #py_path = os.path.join(py_path_now,'test code')
+            #py_path = os.path.join(py_path,'032')
+            #os.chdir(py_path)
+            #os.system("python MC_order.py")
+
+            
+            
+        
+        except Exception:
+            QMessageBox.warning(QMessageBox(), 'Error', 'Cannot find strategy from db.')
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
@@ -299,10 +332,10 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self.about)
         help_menu.addAction(about_action)
 
-
-
-
-    
+        go_png_path = os.path.join(icon_path,'go.png')
+        trigger_strategy = QAction(QIcon(go_png_path), "Run", self)
+        trigger_strategy.triggered.connect(self.run)
+        toolbar.addAction(trigger_strategy)
 
     def loaddata(self):
         self.connection = sqlite3.connect("database.db")
@@ -344,8 +377,9 @@ class MainWindow(QMainWindow):
         dlg.exec_()
 
     def run(self):
-        dlg = StrategyRadioButton()
+        dlg = RunStrategyDialog()
         dlg.exec_()
+
 
 app = QApplication(sys.argv)
 passdlg = LoginDialog()
