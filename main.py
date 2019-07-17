@@ -215,7 +215,7 @@ class RunStrategyDialog(QDialog):
         self.setWindowTitle("Run Strategy")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
-        self.QBtn.clicked.connect(self.run_strategy, self.R)
+        self.QBtn.clicked.connect(self.run_strategy)
         layout = QVBoxLayout()
 
         self.searchinput = QLineEdit()
@@ -247,7 +247,7 @@ class RunStrategyDialog(QDialog):
             py_path_now_initial = os.getcwd()
             py_path_now = os.path.join(py_path_now_initial,'test_code', str(strategy_number))
             os.chdir(py_path_now) # change the directory to the .py file folder
-            print(os.system("ls"))
+            # print(os.system("ls"))
             os.system("python test_1.py") # run the strategy command
             os.chdir(py_path_now_initial) # change the directory back to the original path
 
