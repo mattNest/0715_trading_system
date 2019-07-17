@@ -215,7 +215,7 @@ class RunStrategyDialog(QDialog):
         self.setWindowTitle("Run Strategy")
         self.setFixedWidth(300)
         self.setFixedHeight(100)
-        self.QBtn.clicked.connect(self.run_strategy)
+        self.QBtn.clicked.connect(self.run_strategy, self.R)
         layout = QVBoxLayout()
 
         self.searchinput = QLineEdit()
@@ -255,6 +255,7 @@ class RunStrategyDialog(QDialog):
         except Exception:
             QMessageBox.warning(QMessageBox(), 'Error', 'Cannot find strategy from db.')
 
+    
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -337,7 +338,7 @@ class MainWindow(QMainWindow):
         trigger_strategy.triggered.connect(self.run)
         toolbar.addAction(trigger_strategy)
 
-    def loaddata(self): # draw the main table
+    def loaddata(self): 
         self.connection = sqlite3.connect("database.db")
         query = "SELECT * FROM strategy"
         result = self.connection.execute(query)
