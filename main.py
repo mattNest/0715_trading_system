@@ -244,14 +244,13 @@ class RunStrategyDialog(QDialog):
             
 
             # run the strategy
-            py_path_now = os.getcwd()
-            py_path_now = os.path.join(py_path_now,'test_code', str(strategy_number))
-            os.chdir(py_path_now)
+            py_path_now_initial = os.getcwd()
+            py_path_now = os.path.join(py_path_now_initial,'test_code', str(strategy_number))
+            os.chdir(py_path_now) # change the directory to the .py file folder
             print(os.system("ls"))
             os.system("python test_1.py") # run the strategy command
+            os.chdir(py_path_now_initial) # change the directory back to the original path
 
-            
-            
         
         except Exception:
             QMessageBox.warning(QMessageBox(), 'Error', 'Cannot find strategy from db.')
