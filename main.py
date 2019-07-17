@@ -228,13 +228,13 @@ class RunStrategyDialog(QDialog):
 
     def run_strategy(self):
 
-        searchrol = ""
-        searchrol = self.searchinput.text()
+        strategy_number = ""
+        strategy_number = self.searchinput.text() # get the input strategy number from the user
         
         try:
             self.conn = sqlite3.connect("database.db")
             self.c = self.conn.cursor()
-            result = self.c.execute("SELECT * from strategy WHERE roll="+str(searchrol))
+            result = self.c.execute("SELECT * from strategy WHERE roll="+str(strategy_number))
             row = result.fetchone()
             serachresult = "Strategy No. : " + str(row[0]) + '\n' + "Name : " + str(row[1]) + '\n' + "Branch : " + str(row[2])
             QMessageBox.information(QMessageBox(), 'Successful', serachresult)
@@ -242,12 +242,13 @@ class RunStrategyDialog(QDialog):
             self.c.close()
             self.conn.close()
             
+
             # run the strategy
-            #py_path_now = os.getcwd()
-            #py_path = os.path.join(py_path_now,'test code')
-            #py_path = os.path.join(py_path,'032')
-            #os.chdir(py_path)
-            #os.system("python MC_order.py")
+            py_path_now = os.getcwd()
+            py_path_now = os.path.join(py_path_now,'test_code', str(strategy_number))
+            os.chdir(py_path_now)
+            print(os.system("ls"))
+            os.system("python test_1.py") # run the strategy command
 
             
             
@@ -337,7 +338,7 @@ class MainWindow(QMainWindow):
         trigger_strategy.triggered.connect(self.run)
         toolbar.addAction(trigger_strategy)
 
-    def loaddata(self):
+    def loaddata(self): # draw the main table
         self.connection = sqlite3.connect("database.db")
         query = "SELECT * FROM strategy"
         result = self.connection.execute(query)
